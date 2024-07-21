@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/shortenurl/route.ts", "src/app/utils/stringutils.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/url/shorten/route.ts", "src/app/utils/stringutils.js"],
   "exclude": ["node_modules"]
 }

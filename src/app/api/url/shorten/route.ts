@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
+
 const prisma = new PrismaClient();
 
 
-export async function GET() {
+export async function GET(id: string) {
   const urls = await prisma.urlDetails.findMany();
   console.log("Urls is:", urls)
   //res.status(200).json(urls);
@@ -25,12 +26,14 @@ export async function POST(req : Request, res : Response) {
 
   let urlDetail;
   if(hasSaved.length > 0) {
-    urlDetail = 'Already Exists'
-  } else {
+    urlDetail = 'Already Exists';
+    Response.json({ data: urlDetail })
+  }
+
     urlDetail = await prisma.urlDetails.create({
       data: { original: original, shortened : shortened },
     });
-  }
+  
 
   return Response.json({ data: urlDetail })
 }
