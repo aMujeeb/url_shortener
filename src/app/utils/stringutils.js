@@ -13,5 +13,5 @@ const {
   }
 
   export function generateUUID() {
-    return nanoid(10);
+    return nanoid(10); //generate a length 10 string
   }

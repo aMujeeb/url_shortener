@@ -1,21 +1,17 @@
 import { PrismaClient } from "@prisma/client";
-import { STATUS_CODES } from "http";
+import { NextRequest } from "next/server";
 
 
 const prisma = new PrismaClient();
 
-export async function GET(id: string) {
+export async function GET() {
   const urls = await prisma.urlDetails.findMany();
-  console.log("Urls is:", urls)
-  //res.status(200).json(urls);
-
   return Response.json({ data: urls })
 }
 
-
-export async function POST(req : Request, res : Response) {
+export async function POST(req : NextRequest) {
   const { original, shortened, description } = await req.json();
-  //console.log(req.url);
+  
   try {
     const hasSaved = await prisma.urlDetails.findMany({
       where: {
@@ -41,31 +37,3 @@ export async function POST(req : Request, res : Response) {
     return Response.json({ data: 'Error. Please Try Again' })
   }
 }
-
-
-/*export default async function handler(req, res) {
-    if (req.method === 'POST') {
-      const { original, shortened } = req.body;
-
-      const urlDetail = await prisma.urlDetails.create({
-        data: { original, shortened },
-      });
-
-      res.status(201).json(urlDetail);
-
-    } else if (req.method === 'GET') {
-      const urls = await prisma.urlDetails.findMany();
-      res.status(200).json(urls);
-      
-    } else {
-      res.setHeader('Allow', ['GET', 'POST']);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
-    }
-  } */
-
-    /* export async function GET() {
-      app.use(bodyParser.json());
-      return app.use('/api/shortenurl', urlRoutes); 
-    }
-
-    */

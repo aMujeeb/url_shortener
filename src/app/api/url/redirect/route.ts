@@ -1,22 +1,22 @@
 import { PrismaClient } from "@prisma/client";
-import { STATUS_CODES } from "http";
+import { NextRequest } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function POST(req : Request, res : Response) {
-    const { shortened } = await req.json();
-    console.error('ShortURL:', shortened);
+export async function GET(req : NextRequest) {
+  const shortened = req.nextUrl.searchParams.get("shorturl");
+  
     try {
         const containedItem = await prisma.urlDetails.findFirst({
           where: {
             shortened: {
-              equals: shortened
+              equals: shortened?.toString()
             }
           }
         });
     
         let urlDetail;
-        console.error('Length:', containedItem?.original);
+        
         if(!containedItem) {
             urlDetail = 'Not Available or UnkNown error. Please try aagain..';
             return Response.json({ data: urlDetail, status_code : 401 })

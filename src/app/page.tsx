@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { generateUUID, inputValidate } from './utils/stringutils';
+import ShortUrlComponent from './components/shortenedItem';
 
 const BASE_URL = "sho.rt";
 const URL_SHORTENED_ENDPOINT ="api/url/shorten";
@@ -82,17 +83,16 @@ export default function Home() {
         return
     }
     try {
-      const urlData = {
-        shortened: url,
-      };
-      const response = await axios.post(URL_REDIRECT_ENDPOINT, urlData);
+      const response = await axios.get(URL_REDIRECT_ENDPOINT, {
+        params : {
+          shorturl: url
+        }
+      });
       const { data,  status_code } = response.data
-      console.log("Data :->"+data);
-      console.log("Status :->"+status_code)
       if(status_code === 401) {
         setErrorMessage(data);
       } else {
-           window.open(data.toString().trim(), '_blank')
+        navigateToPage(data.toString().trim());
       }
     } catch (err) {
       setErrorMessage('Error on Redirection');
@@ -158,8 +158,7 @@ export default function Home() {
       <ul className="shortened-list">
         {shortenedURLs.map((shortenedData) => (
           <li key={shortenedData.id} onClick={()=> navigateToPage(shortenedData.original)}>
-            <p className=' text-blue-600'>{shortenedData.shortened}</p>
-            <p className='text-sm'>{shortenedData.description}</p>
+            { ShortUrlComponent(shortenedData) }
           </li>
         ))}
       </ul>
