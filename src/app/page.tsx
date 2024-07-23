@@ -1,10 +1,11 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import inputValidate from './utils/stringutils';
 
-const BASE_URL = "https://short_domain";
+const BASE_URL = "sho.rt";
 const URL_ENDPOINT ="api/url/shorten";
 const {
   v1: uuidv1,
@@ -16,17 +17,13 @@ export default function Home() {
   const [shortenedURLs, setShortenedURL] = useState<UrlShorter[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [description, setDescription] = useState('');
 
-  /**
-   * Validate input url format
-   * @returns 
-   */
-  function inputValidate(url: string) {
+  useEffect(() => {
+    requestSavedItems();
+  }, []
+  );
 
-    return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i
-      .test(url);
-
-  }
 
   const handleShortenURL = async () => {
 
@@ -48,15 +45,18 @@ export default function Home() {
       };
 
       setLoading(true);
-      response = await axios.post(URL_ENDPOINT, urlData);
+      response = await axios.post(URL_ENDPOINT, urlData); //Axios dont have a data cache like fetch()
 
       const { data,  status_code } = response.data
       //console.log("Status :->"+status_code);
       if(status_code === 401) {
         setErrorMessage(data);
       } else {
-        setShortenedURL([response.data.data])
-        console.log(response.data.data);
+        //setShortenedURL([response.data.data])
+        //response = await axios.get(URL_ENDPOINT);
+        //setShortenedURL(response.data.data);
+        //console.log(response.data.data);
+        requestSavedItems();
       }
     } catch (err) {
       console.error('Error Saving New URL:', err);
@@ -64,23 +64,15 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-
-    //TODO: Use the above API results for the display
-    /*  try {
-        response = await axios.get(URL_ENDPOINT);
-        setShortenedURL(response.data.data);
-      } catch (err) {
-        setErrorMessage('Error fetching products:');
-      }
-    */
   };
 
-
-  //TODO: Testing
-  const displayShortenURL = async () => {
-    console.log(originalURL)
-    const result = /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(originalURL);
-    console.log(result)
+  const requestSavedItems = async () => {
+    try {
+      const response = await axios.get(URL_ENDPOINT);
+      setShortenedURL(response.data.data);
+    } catch (err) {
+      setErrorMessage('Error fetching products:');
+    }
   };
 
   function navigateToPage(original: String) {
@@ -98,7 +90,15 @@ export default function Home() {
         onChange={(e) => setOriginalURL(e.target.value)}
         onSubmit={handleShortenURL}
       />
-      <p>You typed: {originalURL}</p>
+
+      <input
+        type="text"
+        className="url-input"
+        placeholder="Enter Description(optional)"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+     
       <p className="error">{errorMessage}</p>
       <button className="shorten-button" onClick={handleShortenURL} disabled={loading}>
         {loading ? (
@@ -109,9 +109,13 @@ export default function Home() {
           </>
         )}
       </button>
+
+      <br></br>
+      <br></br>
+      <h3 className="w-full text-center text-neutral-600">Stored Items</h3>
       <ul className="shortened-list">
         {shortenedURLs.map((shortened) => (
-          <li key={shortened.id} onClick={()=> navigateToPage(shortened.original)}>{shortened.shortened}</li>
+          <li key={shortened.id} onClick={()=> navigateToPage(shortened.shortened)}>{shortened.shortened}</li>
         ))}
       </ul>
     </div>
