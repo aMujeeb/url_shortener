@@ -6,7 +6,8 @@ import axios from 'axios';
 import { generateUUID, inputValidate } from './utils/stringutils';
 
 const BASE_URL = "sho.rt";
-const URL_ENDPOINT ="api/url/shorten";
+const URL_SHORTENED_ENDPOINT ="api/url/shorten";
+const URL_REDIRECT_ENDPOINT ="api/url/redirect";
 
 export default function Home() {
   const [originalURL, setOriginalURL] = useState('');
@@ -43,17 +44,13 @@ export default function Home() {
       };
 
       setLoading(true);
-      response = await axios.post(URL_ENDPOINT, urlData); //Axios dont have a data cache like fetch()
+      response = await axios.post(URL_SHORTENED_ENDPOINT, urlData); //Axios dont have a data cache like fetch()
 
       const { data,  status_code } = response.data
       //console.log("Status :->"+status_code);
       if(status_code === 401) {
         setErrorMessage(data);
       } else {
-        //setShortenedURL([response.data.data])
-        //response = await axios.get(URL_ENDPOINT);
-        //setShortenedURL(response.data.data);
-        //console.log(response.data.data);
         requestSavedItems();
       }
     } catch (err) {
@@ -66,7 +63,7 @@ export default function Home() {
 
   const requestSavedItems = async () => {
     try {
-      const response = await axios.get(URL_ENDPOINT);
+      const response = await axios.get(URL_SHORTENED_ENDPOINT);
       setShortenedURL(response.data.data);
     } catch (err) {
       setErrorMessage('Error fetching products:');
@@ -80,11 +77,28 @@ export default function Home() {
     window.open(url.toString().trim(), '_blank')
   }
 
-  function redirectToPage(url: String) {
+  const redirectToPage = async (url: String) => {
     if(url === '') {
         return
     }
-    //window.open(original.toString().trim(), '_blank')
+    try {
+      const urlData = {
+        shortened: url,
+      };
+      const response = await axios.post(URL_REDIRECT_ENDPOINT, urlData);
+      const { data,  status_code } = response.data
+      console.log("Data :->"+data);
+      console.log("Status :->"+status_code)
+      if(status_code === 401) {
+        setErrorMessage(data);
+      } else {
+           window.open(data.toString().trim(), '_blank')
+      }
+    } catch (err) {
+      setErrorMessage('Error on Redirection');
+    } finally {
+      setShortURL('');
+    }
   }
 
   return (

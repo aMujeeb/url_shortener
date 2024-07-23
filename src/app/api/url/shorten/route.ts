@@ -4,7 +4,6 @@ import { STATUS_CODES } from "http";
 
 const prisma = new PrismaClient();
 
-
 export async function GET(id: string) {
   const urls = await prisma.urlDetails.findMany();
   console.log("Urls is:", urls)
@@ -32,9 +31,9 @@ export async function POST(req : Request, res : Response) {
       return Response.json({ data: urlDetail, status_code : 401 })
     }
 
-      urlDetail = await prisma.urlDetails.create({
-        data: { original: original, shortened : shortened, description : description },
-      });
+    urlDetail = await prisma.urlDetails.create({
+      data: { original: original, shortened : shortened, description : description },
+    });
     
 
     return Response.json({ data: urlDetail, status_code : 201 })
