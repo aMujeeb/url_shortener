@@ -3,17 +3,14 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import inputValidate from './utils/stringutils';
+import { generateUUID, inputValidate } from './utils/stringutils';
 
 const BASE_URL = "sho.rt";
 const URL_ENDPOINT ="api/url/shorten";
-const {
-  v1: uuidv1,
-  v4: uuidv4,
-} = require('uuid');
 
 export default function Home() {
   const [originalURL, setOriginalURL] = useState('');
+  const [shortURL, setShortURL] = useState('');
   const [shortenedURLs, setShortenedURL] = useState<UrlShorter[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,7 +30,7 @@ export default function Home() {
     }
 
     setErrorMessage('');
-    const fullUrl = BASE_URL + '/' + uuidv4();
+    const fullUrl = BASE_URL + '/' + generateUUID();
     console.log(fullUrl)
     let response;
 
@@ -42,6 +39,7 @@ export default function Home() {
       const urlData = {
         original: originalURL,
         shortened: fullUrl,
+        description: description
       };
 
       setLoading(true);
@@ -72,11 +70,21 @@ export default function Home() {
       setShortenedURL(response.data.data);
     } catch (err) {
       setErrorMessage('Error fetching products:');
+    } finally {
+      setOriginalURL('');
+      setDescription('');
     }
   };
 
-  function navigateToPage(original: String) {
-    window.open(original.toString().trim(), '_blank')
+  function navigateToPage(url: String) {
+    window.open(url.toString().trim(), '_blank')
+  }
+
+  function redirectToPage(url: String) {
+    if(url === '') {
+        return
+    }
+    //window.open(original.toString().trim(), '_blank')
   }
 
   return (
@@ -112,10 +120,33 @@ export default function Home() {
 
       <br></br>
       <br></br>
-      <h3 className="w-full text-center text-neutral-600">Stored Items</h3>
+      <h2 className="w-full text-l text-red-800 text-xl">Search By Short Url</h2>
+      <input
+        type="text"
+        className="url-input"
+        placeholder="Enter Short Url"
+        value={shortURL}
+        onChange={(e) => setShortURL(e.target.value)}
+      />
+      <button className="shorten-button" onClick={() => redirectToPage(shortURL) } disabled={loading}>
+        {loading ? (
+          <i className="fa fa-spinner fa-spin"></i>
+        ) : (
+          <>
+            Search & Navigate
+          </>
+        )}
+      </button>
+
+      <br></br>
+      <br></br>
+      <h2 className="w-full text-l text-red-800 text-xl">Stored Items</h2>
       <ul className="shortened-list">
-        {shortenedURLs.map((shortened) => (
-          <li key={shortened.id} onClick={()=> navigateToPage(shortened.shortened)}>{shortened.shortened}</li>
+        {shortenedURLs.map((shortenedData) => (
+          <li key={shortenedData.id} onClick={()=> navigateToPage(shortenedData.original)}>
+            <p className=' text-blue-600'>{shortenedData.shortened}</p>
+            <p className='text-sm'>{shortenedData.description}</p>
+          </li>
         ))}
       </ul>
     </div>

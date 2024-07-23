@@ -15,7 +15,7 @@ export async function GET(id: string) {
 
 
 export async function POST(req : Request, res : Response) {
-  const { original, shortened } = await req.json();
+  const { original, shortened, description } = await req.json();
   //console.log(req.url);
   try {
     const hasSaved = await prisma.urlDetails.findMany({
@@ -33,7 +33,7 @@ export async function POST(req : Request, res : Response) {
     }
 
       urlDetail = await prisma.urlDetails.create({
-        data: { original: original, shortened : shortened },
+        data: { original: original, shortened : shortened, description : description },
       });
     
 

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "UrlDetails" ADD COLUMN     "createddate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

@@ -17,5 +17,7 @@ model UrlDetails {
   id    Int     @id @default(autoincrement())
   original  String @unique
   shortened String @unique
+  createddate DateTime @default(now())
+  description String @default("")
 }
 
