@@ -5,10 +5,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { generateUUID, inputValidate } from './utils/stringutils';
 import ShortUrlComponent from './components/shortenedItem';
+import { navigateToPage } from './utils/navigatetopage';
+import { ShortenedItemsList } from './components/storeitems';
+import { ErrorMessage } from './components/errorlabel';
 
 const BASE_URL = "sho.rt";
-const URL_SHORTENED_ENDPOINT ="api/url/shorten";
-const URL_REDIRECT_ENDPOINT ="api/url/redirect";
+const URL_SHORTENED_ENDPOINT = "api/url/shorten";
+const URL_REDIRECT_ENDPOINT = "api/url/redirect";
 
 export default function Home() {
   const [originalURL, setOriginalURL] = useState('');
@@ -37,7 +40,7 @@ export default function Home() {
     let response;
 
     try {
-      
+
       const urlData = {
         original: originalURL,
         shortened: fullUrl,
@@ -47,16 +50,16 @@ export default function Home() {
       setLoading(true);
       response = await axios.post(URL_SHORTENED_ENDPOINT, urlData); //Axios dont have a data cache like fetch()
 
-      const { data,  status_code } = response.data
+      const { data, status_code } = response.data
       //console.log("Status :->"+status_code);
-      if(status_code === 401) {
+      if (status_code === 401) {
         setErrorMessage(data);
       } else {
         requestSavedItems();
       }
     } catch (err) {
       console.error('Error Saving New URL:', err);
-      setErrorMessage('Error Saving New URL: '+originalURL);
+      setErrorMessage('Error Saving New URL: ' + originalURL);
     } finally {
       setLoading(false);
     }
@@ -74,22 +77,22 @@ export default function Home() {
     }
   };
 
-  function navigateToPage(url: String) {
+  /*function navigateToPage(url: String) {
     window.open(url.toString().trim(), '_blank')
-  }
+  }*/
 
   const redirectToPage = async (url: String) => {
-    if(url === '') {
-        return
+    if (url === '') {
+      return
     }
     try {
       const response = await axios.get(URL_REDIRECT_ENDPOINT, {
-        params : {
+        params: {
           shorturl: url
         }
       });
-      const { data,  status_code } = response.data
-      if(status_code === 401) {
+      const { data, status_code } = response.data
+      if (status_code === 401) {
         setErrorMessage(data);
       } else {
         navigateToPage(data.toString().trim());
@@ -120,8 +123,7 @@ export default function Home() {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-     
-      <p className="error">{errorMessage}</p>
+
       <button className="shorten-button" onClick={handleShortenURL} disabled={loading}>
         {loading ? (
           <i className="fa fa-spinner fa-spin"></i>
@@ -142,7 +144,8 @@ export default function Home() {
         value={shortURL}
         onChange={(e) => setShortURL(e.target.value)}
       />
-      <button className="shorten-button" onClick={() => redirectToPage(shortURL) } disabled={loading}>
+
+      <button className="shorten-button" onClick={() => redirectToPage(shortURL)} disabled={loading}>
         {loading ? (
           <i className="fa fa-spinner fa-spin"></i>
         ) : (
@@ -152,16 +155,11 @@ export default function Home() {
         )}
       </button>
 
+      {ErrorMessage(errorMessage)}
+
       <br></br>
       <br></br>
-      <h2 className="w-full text-l text-red-800 text-xl">Stored Items</h2>
-      <ul className="shortened-list">
-        {shortenedURLs.map((shortenedData) => (
-          <li key={shortenedData.id} onClick={()=> navigateToPage(shortenedData.original)}>
-            { ShortUrlComponent(shortenedData) }
-          </li>
-        ))}
-      </ul>
+      <ShortenedItemsList shortenedURLs={shortenedURLs} />
     </div>
   );
 }
