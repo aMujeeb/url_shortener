@@ -1,7 +1,7 @@
 "use client";
 
 import { navigateToPage } from "../utils/navigatetopage"
-import ShortUrlComponent from "./shortenedItem"
+import { ShortUrlComponent } from "./shortenedItem";
 
 interface Props {
     shortenedURLs: UrlShorter[]
@@ -13,7 +13,7 @@ export const ShortenedItemsList = ({ shortenedURLs }: Props) => {
         <ul className="shortened-list">
             {shortenedURLs.map((shortenedData) => (
                 <li key={shortenedData.id} onClick={() => navigateToPage(shortenedData.original)}>
-                    {ShortUrlComponent(shortenedData)}
+                    <ShortUrlComponent shortUrl={shortenedData} />
                 </li>
             ))}
         </ul>

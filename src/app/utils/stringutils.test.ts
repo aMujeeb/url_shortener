@@ -1,9 +1,9 @@
-import { inputValidate } from '../src/app/utils/stringutils'
-//import "@testing-library/jest-dom";
+import { inputValidate } from './stringutils'
+import "@testing-library/jest-dom";
 
-tdescribe('inputValidate function', () => {
+describe('inputValidate function', () => {
   it('Accepting valid URLs', () => {
-    const validUrl = 'https://example.com';
+    const validUrl = 'https://url.shortener.com';
     expect(inputValidate(validUrl)).toBe(true);
   });
 

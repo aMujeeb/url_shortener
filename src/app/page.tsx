@@ -155,7 +155,7 @@ export default function Home() {
         )}
       </button>
 
-      {ErrorMessage(errorMessage)}
+      <ErrorMessage message={errorMessage} />
 
       <br></br>
       <br></br>
