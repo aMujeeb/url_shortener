@@ -8,7 +8,7 @@ describe('inputValidate function', () => {
   });
 
   it('Rejecting invalid URLs', () => {
-    const invalidUrl = 'not-a-valid-url';
+    const invalidUrl = 'kjgfmhdhgcghcmgc';
     expect(inputValidate(invalidUrl)).toBe(false);
   });
 });

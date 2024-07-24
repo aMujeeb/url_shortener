@@ -1,9 +1,13 @@
 import { render } from '@testing-library/react';
-import { ShortUrlComponent } from './shortenedItem'; // Adjust the import path
+import '@testing-library/jest-dom'
+
+import { ShortUrlComponent } from './shortenedItem';
 
 describe('ShortUrlComponent', () => {
     it('renders the shortened URL correctly', () => {
         const data = {
+            id: 0,
+            original: '',
             shortened: 'https://link',
             description: 'Test desc',
         };
