@@ -1,8 +1,8 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Getting Started
 
-# Setting up the Database and required infrastructure.
+## Setting up the Database and required infrastructure.
 
 1. Install Docker: Download and install Docker on your system.
 2. Pull PostgreSQL Image: Retrieve the PostgreSQL Docker image from Docker Hub using the command
@@ -22,7 +22,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 4. Run docker PostgreSQL container.
 
-# Install Prisma CLI
+## Install Prisma CLI
 
 1. Install Node.js (If not installed): Ensure you have Node.js installed on your system. You can download it from the official website: Node.js.
 2. Create a New Project (if needed): Navigate to your project directory or create a new one. If you’re starting a new project, initialize it with npm:
@@ -76,7 +76,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
    
 
 
- # Running the Development Server
+ ## Running the Development Server
   
   1. Install Dependencies
      First, install the project dependencies:
@@ -100,7 +100,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
   Learn Next.js - an interactive Next.js tutorial.
   You can check out the Next.js GitHub repository - your feedback and contributions are welcome!
   
-  # Deploy on Vercel:
+  ## Deploy on Vercel:
     The easiest way to deploy your Next.js app is to use the Vercel Platform from the creators of Next.js.
 
       How to Deploy
