@@ -37,7 +37,7 @@
     ".next/types/**/*.ts",
     "src/app/api/url/shorten/route.ts",
     "src/app/utils/stringutils.js",
-    "tests/utils.test.js",
+    "tests/utils.test.ts",
     "jest.config.mgs"
   ],
   "exclude": [

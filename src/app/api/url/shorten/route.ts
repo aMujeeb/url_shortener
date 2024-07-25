@@ -9,9 +9,9 @@ export async function GET() {
   return Response.json({ data: urls })
 }
 
-export async function POST(req : NextRequest) {
+export async function POST(req: NextRequest) {
   const { original, shortened, description } = await req.json();
-  
+
   try {
     const hasSaved = await prisma.urlDetails.findMany({
       where: {
@@ -22,18 +22,43 @@ export async function POST(req : NextRequest) {
     });
 
     let urlDetail;
-    if(hasSaved.length > 0) {
+    if (hasSaved.length > 0) {
       urlDetail = 'Already Exists';
-      return Response.json({ data: urlDetail, status_code : 401 })
+      return Response.json({ data: urlDetail, status_code: 401 })
     }
 
     urlDetail = await prisma.urlDetails.create({
-      data: { original: original, shortened : shortened, description : description },
+      data: { original: original, shortened: shortened, description: description },
     });
-    
 
-    return Response.json({ data: urlDetail, status_code : 201 })
-  } catch(err) {
+
+    return Response.json({ data: urlDetail, status_code: 201 })
+  } catch (err) {
+    return Response.json({ data: 'Error. Please Try Again' })
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const shortened = req.nextUrl.searchParams.get("shorturl");
+
+  try {
+    const containedItem = await prisma.urlDetails.delete({
+      where: {
+        shortened: shortened?.toString()
+      }
+    });
+
+    let urlDetail;
+
+    if (!containedItem) {
+      urlDetail = 'Not Available or UnkNown error. Please try aagain..';
+      return Response.json({ data: urlDetail, status_code: 401 })
+    }
+
+    urlDetail = 'Successfully Deleted...';
+    return Response.json({ data: urlDetail, status_code: 201 })
+
+  } catch (err) {
     return Response.json({ data: 'Error. Please Try Again' })
   }
 }

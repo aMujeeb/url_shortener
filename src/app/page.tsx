@@ -104,6 +104,29 @@ export default function Home() {
     }
   }
 
+  const deleteSavedEntryPage = async (url: String) => {
+    if (url === '') {
+      return
+    }
+    try {
+      const response = await axios.delete(URL_SHORTENED_ENDPOINT, {
+        params: {
+          shorturl: url
+        }
+      });
+      const { data, status_code } = response.data
+      if (status_code === 401) {
+        setErrorMessage(data);
+      } else {
+        requestSavedItems();
+      }
+    } catch (err) {
+      setErrorMessage('Error on Redirection');
+    } finally {
+      setShortURL('');
+    }
+  }
+
   return (
     <div className="container">
       <h1>URL Shortener</h1>
@@ -159,7 +182,7 @@ export default function Home() {
 
       <br></br>
       <br></br>
-      <ShortenedItemsList shortenedURLs={shortenedURLs} />
+      <ShortenedItemsList shortenedURLs={shortenedURLs} onDeleteButtonClick={deleteSavedEntryPage} onOpenButtonClick={redirectToPage} />
     </div>
   );
 }
