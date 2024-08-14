@@ -15,8 +15,8 @@ export async function POST(req: NextRequest) {
   try {
     const hasSaved = await prisma.urlDetails.findMany({
       where: {
-        original: {
-          equals: original
+        shortened: {
+          equals: shortened
         }
       }
     });
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     urlDetail = await prisma.urlDetails.create({
       data: { original: original, shortened: shortened, description: description },
     });
-
 
     return Response.json({ data: urlDetail, status_code: 201 })
   } catch (err) {

@@ -1,15 +1,13 @@
-
 "use client";
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { generateUUID, inputValidate } from './utils/stringutils';
-import ShortUrlComponent from './components/shortenedItem';
 import { navigateToPage } from './utils/navigatetopage';
 import { ShortenedItemsList } from './components/storeitems';
 import { ErrorMessage } from './components/errorlabel';
 
-const BASE_URL = "sho.rt";
+const BASE_URL = "short";
 const URL_SHORTENED_ENDPOINT = "api/url/shorten";
 const URL_REDIRECT_ENDPOINT = "api/url/redirect";
 
@@ -76,6 +74,8 @@ export default function Home() {
       setDescription('');
     }
   };
+
+  //Docker compose, Gamma///********* */
 
   /*function navigateToPage(url: String) {
     window.open(url.toString().trim(), '_blank')

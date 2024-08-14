@@ -19,9 +19,8 @@ export async function GET(req: NextRequest) {
 
     if (!containedItem) {
       urlDetail = 'Not Available or UnkNown error. Please try aagain..';
-      return Response.json({ data: urlDetail, status_code: 401 })
+      return Response.json({ data: urlDetail, status_code: 204 })
     }
-    console.error('Original Data:', containedItem?.original);
     urlDetail = containedItem?.original
     return Response.json({ data: urlDetail, status_code: 201 })
 
