@@ -26,22 +26,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function generateNonExistingUrl(): Promise<string> {
-  const shortUrl = BASE_URL + '/' + generateUUID();
-  const hasSaved = await prisma.urlDetails.findMany({
-    where: {
-      shortened: {
-        equals: shortUrl
-      }
-    }
-  });
-  if (hasSaved.length > 0)
-    return await generateNonExistingUrl();
-  else
-    return shortUrl;
-}
-
-
 export async function DELETE(req: NextRequest) {
   const shortened = req.nextUrl.searchParams.get("shorturl");
 
@@ -65,4 +49,19 @@ export async function DELETE(req: NextRequest) {
   } catch (err) {
     return Response.json({ data: 'Error. Please Try Again' })
   }
+}
+
+async function generateNonExistingUrl(): Promise<string> {
+  let shortUrl = BASE_URL + '/' + generateUUID();
+  let hasSaved = await prisma.urlDetails.findMany({
+    where: {
+      shortened: {
+        equals: shortUrl
+      }
+    }
+  });
+  if (hasSaved.length > 0)
+    return await generateNonExistingUrl();
+  else
+    return shortUrl;
 }

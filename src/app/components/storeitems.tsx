@@ -1,6 +1,4 @@
 "use client";
-
-import { navigateToPage } from "../utils/navigatetopage"
 import { ShortUrlComponent } from "./shortenedItem";
 
 interface Props {
