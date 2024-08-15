@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
-//import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { inputValidate } from './utils/stringutils';
 import { ShortenedItemsList } from './components/storeitems';
@@ -23,23 +23,14 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState('');
-  const [redirecting, setRedirecting] = useState(false);
+  const [searchShortURL, setSearchShortURL] = useState('');
+
+  const router = useRouter();
 
   useEffect(() => {
     requestSavedItems();
   }, []
   );
-
-  useEffect(() => {
-    if (redirecting) {
-      // Ensure the router is mounted before pushing a new route
-
-      //router.push(`/app/redirects`);
-      // Alternatively, if you need to redirect to an external site:
-      //window.location.href = 'https://www.google.com';
-      linkRef.current.click()
-    }
-  }, [redirecting]);
 
   const handleShortenURL = async () => {
 
@@ -97,24 +88,9 @@ export default function Home() {
     if (url === '') {
       return
     }
-    try {
-      const response = await axios.get(URL_REDIRECT_ENDPOINT, {
-        params: {
-          shorturl: url
-        }
-      });
-      const { data, status_code } = response.data
-      if (status_code === 401) {
-        setErrorMessage(data);
-      } else {
-        setRedirecting(true);
-        //NavigateToPage(data.toString().trim());
-      }
-    } catch (err) {
-      setErrorMessage('Error on Redirection');
-    } finally {
-      setShortURL('');
-    }
+    setSearchShortURL(url.toString().trim());
+
+    router.push(`/redirects/${url.toString().trim()}`);
   }
 
   const deleteSavedEntryPage = async (url: String) => {
@@ -178,15 +154,7 @@ export default function Home() {
 
       <ShortenedItemsList shortenedURLs={shortenedURLs} onDeleteButtonClick={deleteSavedEntryPage} onOpenButtonClick={redirectToPage} />
 
-      <Link href="/redirects" legacyBehavior>
-        <a ref={linkRef} style={{ display: 'none' }}></a>
-      </Link>
-
-    </div>
+    </div >
   );
 }
-
-
-
-
 
