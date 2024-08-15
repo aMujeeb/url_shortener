@@ -20,7 +20,7 @@ export const ShortenedItemsList = ({ shortenedURLs, onDeleteButtonClick, onOpenB
     };
 
     return (<div>
-        <h2 className="w-full text-l text-red-800 text-xl">Stored Items</h2>
+        <h2 className="w-full text-l text-red-800 text-xl mt-4">Stored Items</h2>
         <ul className="shortened-list">
             {shortenedURLs.map((shortenedData) => (
                 <li key={shortenedData.id}>
