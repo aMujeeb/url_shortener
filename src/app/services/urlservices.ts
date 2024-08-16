@@ -1,4 +1,4 @@
-const URL_SHORTENED_ENDPOINT = "api/url/shorten";
+import { URL_SHORTENED_ENDPOINT } from "../utils/appconstants";
 
 export const shortenURL = async (originalURL: string, description: string) => {
 
@@ -25,9 +25,9 @@ export const getShortenedURLs = async () => {
     return await response.json();
 };
 
-export const deleteShortenedURL = async (shortURL: string) => {
+export const deleteShortenedURL = async (shortURL: String) => {
 
-    const url = `${URL_SHORTENED_ENDPOINT}?shorturl=${encodeURIComponent(shortURL)}`;
+    const url = `${URL_SHORTENED_ENDPOINT}?shorturl=${encodeURIComponent(shortURL.toString())}`;
 
     const response = await fetch(url, {
         method: 'DELETE',

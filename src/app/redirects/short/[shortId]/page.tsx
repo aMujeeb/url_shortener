@@ -1,24 +1,26 @@
 
 import LaunchRedirectUrl from "@/app/components/redirection";
 
-const URL_REDIRECT_ENDPOINT = "api/url/redirect";
 export default async function RequestShortData({ params }: {
     params: { shortId: string }
 }) {
     if (params.shortId === '') {
-        return
+        return <h1>Invalid URL</h1>;
     }
     try {
+
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
         const queryParams = new URLSearchParams({
             shorturl: `short/${params.shortId}`
         });
 
-        const response = await fetch(`http://localhost:3000/api/url/redirect?${queryParams}`, {
+        const response = await fetch(`${apiUrl}/api/url/redirect?${queryParams}`, {
             cache: 'no-store'
         });
         const { data, status_code } = await response.json();
 
-        if (status_code === 204) {
+        if (status_code === 404) {
             return (
                 <h1>URL Not found</h1>
             )
@@ -28,7 +30,7 @@ export default async function RequestShortData({ params }: {
         }
     } catch (err) {
         return (
-            <h1>Re Directed Error Occured</h1>
+            <h1>An error occurred while redirecting</h1>
         )
     }
 }

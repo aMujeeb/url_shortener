@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { inputValidate } from './utils/stringutils';
 import { ShortenedItemsList } from './components/storeitems';
 import { ErrorMessage } from './components/errorlabel';
@@ -10,10 +9,7 @@ import Button from './components/button';
 import InputText from './components/inputText';
 import { deleteShortenedURL, getShortenedURLs, shortenURL } from './services/urlservices';
 
-const URL_SHORTENED_ENDPOINT = "api/url/shorten";
-
 export default function Home() {
-  const linkRef = useRef<HTMLAnchorElement>(null);
 
   const [originalURL, setOriginalURL] = useState('');
   const [shortURL, setShortURL] = useState('');
@@ -38,17 +34,10 @@ export default function Home() {
 
     setErrorMessage('');
 
-    let response;
-
     try {
 
-      const urlData = {
-        original: originalURL,
-        description: description
-      };
-
       setLoading(true);
-      //const { data, status } = await axios.post(URL_SHORTENED_ENDPOINT, { original: originalURL, description });
+
       const { data, status } = await shortenURL(originalURL, description);
 
       if (status === 201) {
@@ -61,15 +50,10 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-
-    if (linkRef.current !== null && linkRef.current !== undefined) {
-      linkRef.current.click();
-    }
   };
 
   const requestSavedItems = async () => {
     try {
-      //const response = await axios.get(URL_SHORTENED_ENDPOINT);
       const response = await getShortenedURLs()
       setShortenedURL(response.data);
     } catch (err) {
@@ -88,16 +72,12 @@ export default function Home() {
     router.push(`/redirects/${url.toString().trim()}`);
   }
 
-  const deleteSavedEntryPage = async (url: string) => {
+  const deleteSavedEntryPage = async (url: String) => {
     if (url === '') {
       return
     }
     try {
-      /*const response = await axios.delete(URL_SHORTENED_ENDPOINT, {
-        params: {
-          shorturl: url
-        }
-      });*/
+
       const response = await deleteShortenedURL(url)
       const { data, status_code } = response.data
       if (status_code === 201) {
