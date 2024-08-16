@@ -1,19 +1,16 @@
-
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { generateUUID, inputValidate } from './utils/stringutils';
-import ShortUrlComponent from './components/shortenedItem';
-import { navigateToPage } from './utils/navigatetopage';
+import React, { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { inputValidate } from './utils/stringutils';
 import { ShortenedItemsList } from './components/storeitems';
 import { ErrorMessage } from './components/errorlabel';
-
-const BASE_URL = "sho.rt";
-const URL_SHORTENED_ENDPOINT = "api/url/shorten";
-const URL_REDIRECT_ENDPOINT = "api/url/redirect";
+import Button from './components/button';
+import InputText from './components/inputText';
+import { deleteShortenedURL, getShortenedURLs, shortenURL } from './services/urlservices';
 
 export default function Home() {
+
   const [originalURL, setOriginalURL] = useState('');
   const [shortURL, setShortURL] = useState('');
   const [shortenedURLs, setShortenedURL] = useState<UrlShorter[]>([]);
@@ -21,11 +18,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState('');
 
+  const router = useRouter();
+
   useEffect(() => {
     requestSavedItems();
   }, []
   );
-
 
   const handleShortenURL = async () => {
 
@@ -35,30 +33,19 @@ export default function Home() {
     }
 
     setErrorMessage('');
-    const fullUrl = BASE_URL + '/' + generateUUID();
-    console.log(fullUrl)
-    let response;
 
     try {
 
-      const urlData = {
-        original: originalURL,
-        shortened: fullUrl,
-        description: description
-      };
-
       setLoading(true);
-      response = await axios.post(URL_SHORTENED_ENDPOINT, urlData); //Axios dont have a data cache like fetch()
 
-      const { data, status_code } = response.data
-      //console.log("Status :->"+status_code);
-      if (status_code === 401) {
+      const { data, status } = await shortenURL(originalURL, description);
+
+      if (status === 201) {
         setErrorMessage(data);
       } else {
         requestSavedItems();
       }
     } catch (err) {
-      console.error('Error Saving New URL:', err);
       setErrorMessage('Error Saving New URL: ' + originalURL);
     } finally {
       setLoading(false);
@@ -67,8 +54,8 @@ export default function Home() {
 
   const requestSavedItems = async () => {
     try {
-      const response = await axios.get(URL_SHORTENED_ENDPOINT);
-      setShortenedURL(response.data.data);
+      const response = await getShortenedURLs()
+      setShortenedURL(response.data);
     } catch (err) {
       setErrorMessage('Error fetching products:');
     } finally {
@@ -77,31 +64,12 @@ export default function Home() {
     }
   };
 
-  /*function navigateToPage(url: String) {
-    window.open(url.toString().trim(), '_blank')
-  }*/
-
   const redirectToPage = async (url: String) => {
     if (url === '') {
       return
     }
-    try {
-      const response = await axios.get(URL_REDIRECT_ENDPOINT, {
-        params: {
-          shorturl: url
-        }
-      });
-      const { data, status_code } = response.data
-      if (status_code === 401) {
-        setErrorMessage(data);
-      } else {
-        navigateToPage(data.toString().trim());
-      }
-    } catch (err) {
-      setErrorMessage('Error on Redirection');
-    } finally {
-      setShortURL('');
-    }
+
+    router.push(`/redirects/${url.toString().trim()}`);
   }
 
   const deleteSavedEntryPage = async (url: String) => {
@@ -109,13 +77,10 @@ export default function Home() {
       return
     }
     try {
-      const response = await axios.delete(URL_SHORTENED_ENDPOINT, {
-        params: {
-          shorturl: url
-        }
-      });
+
+      const response = await deleteShortenedURL(url)
       const { data, status_code } = response.data
-      if (status_code === 401) {
+      if (status_code === 201) {
         setErrorMessage(data);
       } else {
         requestSavedItems();
@@ -129,65 +94,42 @@ export default function Home() {
 
   return (
     <div className="container">
-      <h1>URL Shortener</h1>
-      <input
-        type="text"
-        className="url-input"
-        placeholder="Enter your URL"
+
+      <InputText
         value={originalURL}
         onChange={(e) => setOriginalURL(e.target.value)}
-        onSubmit={handleShortenURL}
+        placeholder="Enter your URL"
+        disabled={loading}
       />
 
-      <input
-        type="text"
-        className="url-input"
-        placeholder="Enter Description(optional)"
+      <InputText
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+        placeholder="Enter Description(optional)"
+        disabled={loading}
       />
 
-      <button className="shorten-button" onClick={handleShortenURL} disabled={loading}>
-        {loading ? (
-          <i className="fa fa-spinner fa-spin"></i>
-        ) : (
-          <>
-            Shorten Url
-          </>
-        )}
-      </button>
+      <Button callBackValue={''} onButtonClick={handleShortenURL} loading={loading}>
+        Shorten Url
+      </Button>
 
-      <br></br>
-      <br></br>
-      <h2 className="w-full text-l text-red-800 text-xl">Search By Short Url</h2>
-      <input
-        type="text"
-        className="url-input"
+      <h2 className="w-full text-l text-red-800 text-xl mt-4">Search By Short Url</h2>
+
+      <InputText
+        disabled={loading}
         placeholder="Enter Short Url"
         value={shortURL}
         onChange={(e) => setShortURL(e.target.value)}
       />
 
-      <button className="shorten-button" onClick={() => redirectToPage(shortURL)} disabled={loading}>
-        {loading ? (
-          <i className="fa fa-spinner fa-spin"></i>
-        ) : (
-          <>
-            Search & Navigate
-          </>
-        )}
-      </button>
+      <Button callBackValue={shortURL} onButtonClick={redirectToPage} loading={loading}>
+        Search & Navigate
+      </Button>
 
       <ErrorMessage message={errorMessage} />
 
-      <br></br>
-      <br></br>
       <ShortenedItemsList shortenedURLs={shortenedURLs} onDeleteButtonClick={deleteSavedEntryPage} onOpenButtonClick={redirectToPage} />
-    </div>
+
+    </div >
   );
 }
-
-
-
-
-

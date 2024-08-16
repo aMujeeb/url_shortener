@@ -11,7 +11,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 3. Run PostgreSQL Container: Create and run a Docker container with PostgreSQL using the following command
 
   docker run -d \
-    --name <!--- DB Name ---> \
+    --name  \
     -p 5432:5432 \
     -e POSTGRES_PASSWORD=postgrespwd \
     -e PGDATA=/var/lib/postgresql/data/pgdata \

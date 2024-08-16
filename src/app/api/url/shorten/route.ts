@@ -1,8 +1,9 @@
+import { generateUUID } from "@/app/utils/stringutils";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest } from "next/server";
 
-
 const prisma = new PrismaClient();
+const BASE_URL = "short";
 
 export async function GET() {
   const urls = await prisma.urlDetails.findMany();
@@ -10,27 +11,14 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const { original, shortened, description } = await req.json();
+  const { original, description } = await req.json();
 
   try {
-    const hasSaved = await prisma.urlDetails.findMany({
-      where: {
-        original: {
-          equals: original
-        }
-      }
+    const fullShortUrl = await generateNonExistingUrl();
+
+    const urlDetail = await prisma.urlDetails.create({
+      data: { original: original, shortened: fullShortUrl, description: description },
     });
-
-    let urlDetail;
-    if (hasSaved.length > 0) {
-      urlDetail = 'Already Exists';
-      return Response.json({ data: urlDetail, status_code: 401 })
-    }
-
-    urlDetail = await prisma.urlDetails.create({
-      data: { original: original, shortened: shortened, description: description },
-    });
-
 
     return Response.json({ data: urlDetail, status_code: 201 })
   } catch (err) {
@@ -61,4 +49,19 @@ export async function DELETE(req: NextRequest) {
   } catch (err) {
     return Response.json({ data: 'Error. Please Try Again' })
   }
+}
+
+async function generateNonExistingUrl(): Promise<string> {
+  let shortUrl = BASE_URL + '/' + generateUUID();
+  let hasSaved = await prisma.urlDetails.findMany({
+    where: {
+      shortened: {
+        equals: shortUrl
+      }
+    }
+  });
+  if (hasSaved.length > 0)
+    return await generateNonExistingUrl();
+  else
+    return shortUrl;
 }
