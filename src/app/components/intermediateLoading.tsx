@@ -13,7 +13,7 @@ export default function IntermediateLoading() {
         <div>
             <h1>Loading...</h1>
             <div>
-                {seconds > 0 ? <h1>{seconds}</h1> : <h1>Time's up!</h1>}
+                {seconds > 0 ? <h1>{seconds}</h1> : <h1>Re-Directing.!</h1>}
             </div>
         </div>
     )

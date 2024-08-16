@@ -8,11 +8,9 @@ import { ShortenedItemsList } from './components/storeitems';
 import { ErrorMessage } from './components/errorlabel';
 import Button from './components/button';
 import InputText from './components/inputText';
-import Link from 'next/link';
-
+import { deleteShortenedURL, getShortenedURLs, shortenURL } from './services/urlservices';
 
 const URL_SHORTENED_ENDPOINT = "api/url/shorten";
-const URL_REDIRECT_ENDPOINT = "api/url/redirect";
 
 export default function Home() {
   const linkRef = useRef<HTMLAnchorElement>(null);
@@ -23,7 +21,6 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState('');
-  const [searchShortURL, setSearchShortURL] = useState('');
 
   const router = useRouter();
 
@@ -51,17 +48,15 @@ export default function Home() {
       };
 
       setLoading(true);
-      response = await axios.post(URL_SHORTENED_ENDPOINT, urlData); //Axios dont have a data cache like fetch()
+      //const { data, status } = await axios.post(URL_SHORTENED_ENDPOINT, { original: originalURL, description });
+      const { data, status } = await shortenURL(originalURL, description);
 
-      const { data, status_code } = response.data
-      //console.log("Status :->"+status_code);
-      if (status_code === 401) {
+      if (status === 201) {
         setErrorMessage(data);
       } else {
         requestSavedItems();
       }
     } catch (err) {
-      console.error('Error Saving New URL:', err);
       setErrorMessage('Error Saving New URL: ' + originalURL);
     } finally {
       setLoading(false);
@@ -74,8 +69,9 @@ export default function Home() {
 
   const requestSavedItems = async () => {
     try {
-      const response = await axios.get(URL_SHORTENED_ENDPOINT);
-      setShortenedURL(response.data.data);
+      //const response = await axios.get(URL_SHORTENED_ENDPOINT);
+      const response = await getShortenedURLs()
+      setShortenedURL(response.data);
     } catch (err) {
       setErrorMessage('Error fetching products:');
     } finally {
@@ -88,23 +84,23 @@ export default function Home() {
     if (url === '') {
       return
     }
-    setSearchShortURL(url.toString().trim());
 
     router.push(`/redirects/${url.toString().trim()}`);
   }
 
-  const deleteSavedEntryPage = async (url: String) => {
+  const deleteSavedEntryPage = async (url: string) => {
     if (url === '') {
       return
     }
     try {
-      const response = await axios.delete(URL_SHORTENED_ENDPOINT, {
+      /*const response = await axios.delete(URL_SHORTENED_ENDPOINT, {
         params: {
           shorturl: url
         }
-      });
+      });*/
+      const response = await deleteShortenedURL(url)
       const { data, status_code } = response.data
-      if (status_code === 401) {
+      if (status_code === 201) {
         setErrorMessage(data);
       } else {
         requestSavedItems();
@@ -157,4 +153,3 @@ export default function Home() {
     </div >
   );
 }
-
