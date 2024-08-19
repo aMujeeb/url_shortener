@@ -9,7 +9,7 @@ This README covers the necessary steps to set up Docker, Prisma, and run the dev
 1. Docker Engine: Make sure Docker Engine is installed and running on your machine. You can download it from the Docker website.(https://docs.docker.com/get-docker/)
 2. Docker Compose: Install Docker Compose, which is a tool for defining and running multi-container Docker applications. It’s often included with Docker Desktop, but you can also install it separately if needed.
 
-3. 
+3. Execute command 'docker-compose up --build' in a terminal
   
 
  ## Running the Application
