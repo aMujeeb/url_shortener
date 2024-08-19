@@ -5,20 +5,21 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Setting up the Database and required infrastructure.
 
 1. Install Docker: Download and install Docker on your system.
-2. Pull PostgreSQL Image: Retrieve the PostgreSQL Docker image from Docker Hub using the command
+2. Pull PostgreSQL Image: Open the terminal. Retrieve the PostgreSQL Docker image from Docker Hub using the command \
    docker pull postgres
 
 3. Run PostgreSQL Container: Create and run a Docker container with PostgreSQL using the following command
 
   docker run -d \
-    --name  \
+    --name url-shortener \
     -p 5432:5432 \
     -e POSTGRES_PASSWORD=postgrespwd \
     -e PGDATA=/var/lib/postgresql/data/pgdata \
     -v ${PWD}/postgres_data:/var/lib/postgresql/data \
     postgres:16
     
-  This command sets up a PostgreSQL container, specifying the username, password, port, and data volume.
+  This command sets up a PostgreSQL container, specifying the username, password, port, and data volume. \
+  'url-shortener' will be the data base name. 
 
 4. Run docker PostgreSQL container.
 
