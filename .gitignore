@@ -73,7 +73,7 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-.env
+# .env this is not a best practice. Environt variables should be kept secret in VErsel servers / AWS constants or as Docker Secrets For assignement purposes only
 .env.development.local
 .env.test.local
 .env.production.local
