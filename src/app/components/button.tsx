@@ -16,5 +16,4 @@ export default function Button({ callBackValue, loading, onButtonClick, children
             {loading ? <i className="fa fa-spinner fa-spin"></i> : children}
         </button>
     )
-
 }
