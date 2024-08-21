@@ -66,4 +66,21 @@ it('Invoke on onOpenButtonClick', () => {
 
     // Verify that onOpenButtonClickMock was called with the correct parameter
     expect(onOpenButtonClickMock).toHaveBeenCalledWith(mockShortenedURLs[0].shortened);
-}); 
+});
+
+it('should handle an empty shortenedURLs array without errors', () => {
+    const shortenedURLs: UrlShorter[] = [];
+    const onDeleteButtonClick = jest.fn();
+    const onOpenButtonClick = jest.fn();
+
+    const { getByText } = render(
+        <ShortenedItemsList
+            shortenedURLs={shortenedURLs}
+            onDeleteButtonClick={onDeleteButtonClick}
+            onOpenButtonClick={onOpenButtonClick}
+        />
+    );
+
+    expect(getByText('Stored Items')).toBeInTheDocument();
+    expect(document.querySelector('.shortened-list')?.children.length).toBe(0);
+});

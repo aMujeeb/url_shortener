@@ -21,4 +21,3 @@ model UrlDetails {
   createddate DateTime @default(now())
   description String @default("")
 }
-

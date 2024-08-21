@@ -8,5 +8,5 @@ export function inputValidate(url: string) {
 }
 
 export function generateUUID() {
-  return nanoid(4); //generate a length 10 string
+  return nanoid(4); //generate a length 4 string
 }
